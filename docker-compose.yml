@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: shaco_mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  cassandra:
+    image: cassandra:4.1
+    container_name: shaco_cassandra
+    ports:
+      - '9042:9042'
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=shaco
+      - CASSANDRA_DC=datacenter1
+
+  dgraph_zero:
+    image: dgraph/dgraph:v23.1.0
+    container_name: shaco_dgraph_zero
+    ports:
+      - '5080:5080'
+    command: dgraph zero --my=dgraph_zero:5080
+    volumes:
+      - dgraph_data:/dgraph
+
+  dgraph_alpha:
+    image: dgraph/dgraph:v23.1.0
+    container_name: shaco_dgraph_alpha
+    ports:
+      - '8080:8080'
+      - '9080:9080'
+    command: dgraph alpha --my=dgraph_alpha:7080 --zero=dgraph_zero:5080
+    volumes:
+      - dgraph_data:/dgraph
+    depends_on:
+      - dgraph_zero
+
+volumes:
+  mongo_data:
+  cassandra_data:
+  dgraph_data:
