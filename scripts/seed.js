@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { v4 as uuidv4 } from 'uuid';
 import { connectMongo } from '../src/utils/mongo.js';
+import * as cassandra from '../src/utils/cassandra.js';
+
 import Champion from '../src/models/Champion.js';
 import Match from '../src/models/Match.js';
 import ProPlayer from '../src/models/ProPlayer.js';
@@ -13,6 +16,17 @@ dotenv.config();
 
 const seed = async () => {
   await connectMongo();
+
+  const tables = [
+    'player_ranking_history', 'player_match_log', 'meta_changes_by_patch',
+    'international_tournaments', 'early_game_stats', 'season_player_stats',
+    'champion_popularity_weekly'
+  ];
+
+  for (const table of tables) {
+    await cassandra.alter(`TRUNCATE ${table}`);
+  }
+  console.log('Tablas de Cassandra limpiadas');
 
   // Limpiar colecciones
   await Promise.all([
@@ -195,8 +209,57 @@ const seed = async () => {
   ]);
 
   console.log('Tournament Results seeded');
-  console.log('Seed completo');
+  console.log('Seed completo MongoDB');
+
+  // Cassandra seeding
+  const fakerId = uuidv4();
+  const capsId = uuidv4();
+
+  await cassandra.mutate(
+    `INSERT INTO player_ranking_history (player_id, date, tier, rank, league_points, wins, losses) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [fakerId, new Date(), 'CHALLENGER', 'I', 1200, 450, 380]
+  );
+  console.log('Players & Ranking History seeded');
+
+  await cassandra.mutate(
+    `INSERT INTO player_match_log (player_id, match_timestamp, match_id, game_mode, champion_id, participants, win, duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [fakerId, new Date(), 'KR_123456', 'CLASSIC', 157, ['Faker', 'Chovy', 'Gumayusi'], true, 1842]
+  );
+
+  await cassandra.mutate(
+    `INSERT INTO meta_changes_by_patch (patch_version, champion_id, global_win_rate, global_pick_rate, global_ban_rate, total_games_analyzed) VALUES (?, ?, ?, ?, ?, ?)`,
+    ['14.6', 157, 51.2, 15.5, 30.1, 500000]
+  );
+
+  await cassandra.mutate(
+    `INSERT INTO international_tournaments (tournament_id, match_date, match_id, team_a_name, team_b_name, team_a_score, team_b_score, winner_id, stage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [uuidv4(), new Date('2024-03-15'), 'LCK_SPRING_M1', 'T1', 'Gen.G', 2, 0, 'T1', 'Finals']
+  );
+
+  // 7. Early Game Stats (Cassandra)
+  await cassandra.mutate(
+    `INSERT INTO early_game_stats (game_mode, match_timestamp, match_id, first_blood_team_id, first_blood_time, first_dragon_team_id, win_loss_result) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    ['CLASSIC', new Date(), 'KR_123456', 'T1', 185, 'T1', 'WIN']
+  );
+
+  // 8. Season Stats (Cassandra)
+  await cassandra.mutate(
+    `INSERT INTO season_player_stats (player_id, season_id, total_games_played, total_kills, total_deaths, total_assists, highest_tier_achieved, most_played_champion_id, average_kda) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [fakerId, 'SEASON_2024', 830, 4150, 2100, 5200, 'CHALLENGER', 157, 4.45]
+  );
+
+  // 9. Champion Popularity (Cassandra)
+  await cassandra.mutate(
+    `INSERT INTO champion_popularity_weekly (week_number, pick_count, champion_id, tier_avg, win_rate_in_week) VALUES (?, ?, ?, ?, ?)`,
+    [15, 120000, 157, 'EMERALD', 49.5]
+  );
+
+  console.log('Cassandra seeding completo');
+  console.log('Seed total finalizado');
+  
+  await cassandra.shutdown();
   process.exit(0);
+
 };
 
 seed().catch((err) => {
