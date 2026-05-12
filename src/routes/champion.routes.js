@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Router } from 'express';
 import { syncAllChampions, listAllChampions, getChampionById, getChampionByRole } from '../controllers/champion.controller.js';
 
@@ -9,3 +10,12 @@ router.get('/role/:role', getChampionByRole);
 router.get('/:championId', getChampionById);
 
 export default router;
+=======
+const { Router } = require('express');
+
+const router = Router();
+
+// TODO Ethan (MongoDB)
+
+module.exports = router;
+>>>>>>> 8494115 (router)
