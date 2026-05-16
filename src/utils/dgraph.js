@@ -1,41 +1,45 @@
-require('dotenv').config();
-const dgraph = require('dgraph-js');
-const grpc = require('@grpc/grpc-js');
+import 'dotenv/config';
 
-const DGRAPH_URL = process.env.DGRAPH_URL || 'localhost:9080';
+const BASE = `http://${process.env.DGRAPH_HTTP || 'localhost:8080'}`;
 
-const stub = new dgraph.DgraphClientStub(DGRAPH_URL, grpc.credentials.createInsecure());
-const client = new dgraph.DgraphClient(stub);
-
-async function query(dql, vars = {}) {
-  const txn = client.newTxn({ readOnly: true });
-  try {
-    const res = Object.keys(vars).length > 0
-      ? await txn.queryWithVars(dql, vars)
-      : await txn.query(dql);
-    return res.getJson();
-  } finally {
-    await txn.discard();
-  }
+export async function query(dql, vars = {}) {
+  const hasVars = Object.keys(vars).length > 0;
+  const res = await fetch(`${BASE}/query`, {
+    method: 'POST',
+    headers: { 'Content-Type': hasVars ? 'application/json' : 'application/dql' },
+    body: hasVars ? JSON.stringify({ query: dql, variables: vars }) : dql,
+  });
+  if (!res.ok) throw new Error(`Dgraph query failed: ${await res.text()}`);
+  const json = await res.json();
+  return json.data;
 }
 
-async function mutate(payload) {
-  const txn = client.newTxn();
-  try {
-    const mu = new dgraph.Mutation();
-    mu.setSetJson(JSON.stringify(payload));
-    mu.setCommitNow(true);
-    await txn.mutate(mu);
-  } catch (err) {
-    await txn.discard();
-    throw err;
-  }
+export async function mutate(payload) {
+  const res = await fetch(`${BASE}/mutate?commitNow=true`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ set: Array.isArray(payload) ? payload : [payload] }),
+  });
+  if (!res.ok) throw new Error(`Dgraph mutate failed: ${await res.text()}`);
+  return res.json();
 }
 
-async function alter(schema) {
-  const op = new dgraph.Operation();
-  op.setSchema(schema);
-  await client.alter(op);
+export async function alter(schema) {
+  const res = await fetch(`${BASE}/alter`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/dql' },
+    body: schema,
+  });
+  if (!res.ok) throw new Error(`Dgraph alter failed: ${await res.text()}`);
+  return res.json();
 }
 
-module.exports = { query, mutate, alter };
+export async function dropAll() {
+  const res = await fetch(`${BASE}/alter`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ drop_all: true }),
+  });
+  if (!res.ok) throw new Error(`Dgraph dropAll failed: ${await res.text()}`);
+  return res.json();
+}

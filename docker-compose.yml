@@ -35,7 +35,7 @@ services:
     ports:
       - '8080:8080'
       - '9080:9080'
-    command: dgraph alpha --my=dgraph_alpha:7080 --zero=dgraph_zero:5080
+    command: dgraph alpha --my=dgraph_alpha:7080 --zero=dgraph_zero:5080 --security whitelist=0.0.0.0/0
     volumes:
       - dgraph_data:/dgraph
     depends_on:

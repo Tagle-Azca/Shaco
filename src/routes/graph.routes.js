@@ -1,22 +1,13 @@
-const { Router } = require('express');
-const ctrl = require('../controllers/graph.controller');
+import { Router } from 'express';
+import * as q from '../services/graph.queries.js';
 
 const router = Router();
 
-// Champion graph
-router.get('/champion/:championId/synergies', ctrl.getSynergies);
-router.get('/champion/:championId/counters',  ctrl.getCounters);
+router.get('/champion/:championId',   q.getChampionGraph);   // { synergies[], counters[] }
+router.get('/player/:puuid/overview', q.getPlayerOverview);  // { mains[], network[] }
+router.get('/pro/teams',              q.getActiveTeams);     // Team[] con rosters
+router.get('/pro/player/:id',         q.getProProfile);      // { career[], rivalries[] }
+router.get('/pro/org',                q.getOrgGraph);        // jerarquía Org → Team → ProPlayer
+router.get('/full',                   q.getFullGraph);       // { nodes[], links[] } para grafo
 
-// Player graph
-router.get('/player/:puuid/mains',   ctrl.getPlayerMains);
-router.get('/player/:puuid/network', ctrl.getPlayerNetwork);
-
-// Pro scene graph
-router.get('/pro/org',              ctrl.getOrgGraph);
-router.get('/pro/player/:id/career', ctrl.getProCareer);
-router.get('/pro/rivalry/:id',       ctrl.getProRivalry);
-
-// Full graph (visualización)
-router.get('/full', ctrl.getFullGraph);
-
-module.exports = router;
+export default router;

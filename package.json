@@ -10,16 +10,13 @@
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down",
     "seed": "node scripts/seed.js",
+    "seed:dgraph": "node scripts/seed-dgraph.js",
     "test:repos": "node scripts/test-repos.js"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.10.0",
-<<<<<<< HEAD
     "cassandra-driver": "^4.9.0",
-=======
-    "cassandra-driver": "^4.7.2",
     "cors": "^2.8.6",
->>>>>>> 8494115 (router)
     "dgraph-js": "^21.3.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

@@ -1,14 +1,10 @@
-const { Router } = require('express');
-const graphRoutes = require('./graph.routes');
-
-// TODO Ethan (MongoDB)
-const championRoutes = require('./champion.routes');
-const matchRoutes    = require('./match.routes');
-const playerRoutes   = require('./player.routes');
-
-// TODO Rafael (Cassandra)
-const rankingRoutes    = require('./ranking.routes');
-const tournamentRoutes = require('./tournament.routes');
+import { Router } from 'express';
+import graphRoutes      from './graph.routes.js';
+import championRoutes   from './champion.routes.js';
+import matchRoutes      from './match.routes.js';
+import playerRoutes     from './player.routes.js';
+import rankingRoutes    from './ranking.routes.js';
+import tournamentRoutes from './tournament.routes.js';
 
 const router = Router();
 
@@ -19,4 +15,4 @@ router.use('/player',     playerRoutes);
 router.use('/ranking',    rankingRoutes);
 router.use('/tournament', tournamentRoutes);
 
-module.exports = router;
+export default router;
