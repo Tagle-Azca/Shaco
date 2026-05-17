@@ -2,12 +2,6 @@ import mongoose from 'mongoose';
 
 const userSettingsSchema = new mongoose.Schema(
   {
-    puuid: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true,
-    },
     favoriteChampions: [{ type: String }],
     favoritePlayers: [{ type: String }],
     language: {
