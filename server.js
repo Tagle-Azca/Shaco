@@ -21,6 +21,15 @@ app.use((err, _req, res, _next) => {
   res.status(status).json({ error: err.message });
 });
 
-app.listen(PORT, () => {
-  logger.info(`shaco running on http://localhost:${PORT}`);
+async function startServer() {
+  await connectMongo();
+
+  app.listen(PORT, () => {
+    logger.info(`shaco running on http://localhost:${PORT}`);
+  });
+}
+
+startServer().catch((err) => {
+  logger.error({ err }, 'Failed to start server');
+  process.exit(1);
 });

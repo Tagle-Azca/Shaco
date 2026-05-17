@@ -17,3 +17,9 @@ export const upsertPlayerProfile = async (profile) =>
 export const findPlayerBySummonerName = async (summonerName) =>
 	Player.findOne({ summonerName: new RegExp(`^${summonerName}$`, 'i') }).lean();
 
+export const findPlayerByRiotId = async ({ summonerName, tag }) =>
+	Player.findOne({
+		summonerName: new RegExp(`^${summonerName}$`, 'i'),
+		tag: new RegExp(`^${tag}$`, 'i'),
+	}).lean();
+
