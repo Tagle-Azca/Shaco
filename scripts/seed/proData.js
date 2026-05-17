@@ -1,5 +1,3 @@
-// ─── Nodos: Organizaciones ────────────────────────────────────────────────────
-
 export const ORG_NODES = [
   { uid: '_:org_t1',  'dgraph.type': 'Organization', orgId: 'ORG_T1',   orgName: 'T1 Corp'         },
   { uid: '_:org_gen', 'dgraph.type': 'Organization', orgId: 'ORG_GENG', orgName: 'Gen.G Corp'      },
@@ -9,9 +7,6 @@ export const ORG_NODES = [
   { uid: '_:org_dk',  'dgraph.type': 'Organization', orgId: 'ORG_DK',   orgName: 'Dplus KIA Corp'  },
 ];
 
-// ─── Nodos: Equipos ───────────────────────────────────────────────────────────
-// teamId debe coincidir con MongoDB (mongoData.js TEAMS)
-
 export const TEAM_NODES = [
   // Activos
   { uid: '_:t_t1',    'dgraph.type': 'Team', teamId: 'T1_KR',  teamName: 'T1',             region: 'LCK' },
@@ -20,7 +15,7 @@ export const TEAM_NODES = [
   { uid: '_:t_c9',    'dgraph.type': 'Team', teamId: 'C9_NA',  teamName: 'Cloud9',         region: 'LCS' },
   { uid: '_:t_blg',   'dgraph.type': 'Team', teamId: 'BLG_CN', teamName: 'BLG',            region: 'LPL' },
   { uid: '_:t_dk',    'dgraph.type': 'Team', teamId: 'DK_KR',  teamName: 'Dplus KIA',      region: 'LCK' },
-  // Históricos (solo para careers/PLAYED_FOR)
+  // Históricos
   { uid: '_:t_fnatic', 'dgraph.type': 'Team', teamId: 'FNC_EU',  teamName: 'Fnatic',          region: 'LEC' },
   { uid: '_:t_tsm',    'dgraph.type': 'Team', teamId: 'TSM_NA',  teamName: 'TSM',             region: 'LCS' },
   { uid: '_:t_ssg',    'dgraph.type': 'Team', teamId: 'SSG_KR',  teamName: 'Samsung Galaxy',  region: 'LCK' },
@@ -28,8 +23,6 @@ export const TEAM_NODES = [
   { uid: '_:t_damwon', 'dgraph.type': 'Team', teamId: 'DWG_KR',  teamName: 'Damwon Gaming',   region: 'LCK' },
   { uid: '_:t_ig',     'dgraph.type': 'Team', teamId: 'IG_CN',   teamName: 'Invictus Gaming', region: 'LPL' },
 ];
-
-// ─── Aristas: HAS_TEAM (Org → Team) ──────────────────────────────────────────
 
 export const HAS_TEAM_EDGES = [
   { uid: '_:org_t1',  has_team: { uid: '_:t_t1',  'has_team|isActive': true } },
@@ -39,9 +32,6 @@ export const HAS_TEAM_EDGES = [
   { uid: '_:org_blg', has_team: { uid: '_:t_blg', 'has_team|isActive': true } },
   { uid: '_:org_dk',  has_team: { uid: '_:t_dk',  'has_team|isActive': true } },
 ];
-
-// ─── Nodos: Pro Players ───────────────────────────────────────────────────────
-// proPlayerId debe coincidir con MongoDB (mongoData.js PRO_PLAYERS y TEAMS.roster)
 
 export const PRO_PLAYER_NODES = [
   // T1
@@ -80,16 +70,13 @@ export const PRO_PLAYER_NODES = [
   { uid: '_:pro_showmaker', 'dgraph.type': 'ProPlayer', proPlayerId: 'pro_028', proName: 'ShowMaker',  nationality: 'KR' },
   { uid: '_:pro_aiming',    'dgraph.type': 'ProPlayer', proPlayerId: 'pro_029', proName: 'Aiming',     nationality: 'KR' },
   { uid: '_:pro_kellin',    'dgraph.type': 'ProPlayer', proPlayerId: 'pro_030', proName: 'Kellin',     nationality: 'KR' },
-  // Leyendas (sin equipo activo en Dgraph, pero tienen careers)
+  // Leyendas
   { uid: '_:pro_rekkles',   'dgraph.type': 'ProPlayer', proPlayerId: 'pro_031', proName: 'Rekkles',    nationality: 'SE' },
   { uid: '_:pro_uzi',       'dgraph.type': 'ProPlayer', proPlayerId: 'pro_032', proName: 'Uzi',        nationality: 'CN' },
   { uid: '_:pro_theshy',    'dgraph.type': 'ProPlayer', proPlayerId: 'pro_033', proName: 'TheShy',     nationality: 'CN' },
   { uid: '_:pro_bjergsen',  'dgraph.type': 'ProPlayer', proPlayerId: 'pro_034', proName: 'Bjergsen',   nationality: 'DK' },
   { uid: '_:pro_ruler',     'dgraph.type': 'ProPlayer', proPlayerId: 'pro_035', proName: 'Ruler',      nationality: 'KR' },
 ];
-
-// ─── Aristas: HAS_PLAYER (Team → ProPlayer) ──────────────────────────────────
-// Facets: role, joinDate, isActive
 
 export const HAS_PLAYER_EDGES = [
   { uid: '_:t_t1',  has_player: { uid: '_:pro_zeus',      'has_player|role': 'TOP',     'has_player|joinDate': '2022-01-01', 'has_player|isActive': true } },
@@ -124,9 +111,6 @@ export const HAS_PLAYER_EDGES = [
   { uid: '_:t_dk',  has_player: { uid: '_:pro_kellin',    'has_player|role': 'SUPPORT', 'has_player|joinDate': '2022-01-01', 'has_player|isActive': true } },
 ];
 
-// ─── Aristas: PLAYED_FOR (ProPlayer → Team) — historial de carrera ───────────
-// Facets: startDate, endDate (vacío = actualmente), region, tournamentsPlayed
-
 export const PLAYED_FOR_EDGES = [
   { uid: '_:pro_faker',     played_for: { uid: '_:t_t1',    'played_for|startDate': '2013-01-17', 'played_for|endDate': '',           'played_for|region': 'LCK', 'played_for|tournamentsPlayed': 42 } },
   { uid: '_:pro_caps',      played_for: { uid: '_:t_fnatic', 'played_for|startDate': '2017-11-01', 'played_for|endDate': '2018-11-30', 'played_for|region': 'LEC', 'played_for|tournamentsPlayed': 4  } },
@@ -147,10 +131,6 @@ export const PLAYED_FOR_EDGES = [
   { uid: '_:pro_chovy',     played_for: { uid: '_:t_gen',   'played_for|startDate': '2022-01-01', 'played_for|endDate': '',           'played_for|region': 'LCK', 'played_for|tournamentsPlayed': 8  } },
   { uid: '_:pro_uzi',       played_for: { uid: '_:t_ssg',   'played_for|startDate': '2014-01-01', 'played_for|endDate': '2014-12-31', 'played_for|region': 'LCK', 'played_for|tournamentsPlayed': 2  } },
 ];
-
-// ─── Aristas: RIVAL_OF (ProPlayer ↔ ProPlayer) ───────────────────────────────
-// Bidireccionales — winsA son las wins del primer jugador (a), winsB del segundo (b)
-// Facets: totalMatches, winsA, winsB, lastEncounter, tournaments
 
 function rivalry(a, b, totalMatches, winsA, winsB, lastEncounter, tournaments) {
   return [
