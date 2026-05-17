@@ -1,18 +1,3 @@
-// ─── Cómo funciona este archivo ───────────────────────────────────────────────
-//
-// Dgraph usa "blank nodes" (_:nombre) para referencias dentro de una sola mutación.
-// Cada blank node se define UNA VEZ con dgraph.type + propiedades.
-// Las aristas se agregan referenciando el mismo blank node de nuevo.
-//
-// Facets (propiedades de arista) se expresan como:
-//   'predicado|facetKey': valor
-// junto al objeto que tiene la arista.
-//
-// IMPORTANTE: todo debe ir en UNA sola llamada a mutate() para que las referencias funcionen.
-
-// ─── Nodos: Campeones ─────────────────────────────────────────────────────────
-// Agrega aquí cualquier nuevo campeón — solo necesita uid, dgraph.type, championId, champName
-
 export const CHAMPION_NODES = [
   // TOP
   { uid: '_:darius',   'dgraph.type': 'Champion', championId: 'Darius',    champName: 'Darius'     },
@@ -65,10 +50,6 @@ export const CHAMPION_NODES = [
   { uid: '_:morgana',  'dgraph.type': 'Champion', championId: 'Morgana',   champName: 'Morgana'    },
 ];
 
-// ─── Aristas: Sinergias (SYNERGIZES_WITH) ────────────────────────────────────
-// Bidireccionales — cada par aparece DOS veces (A→B y B→A)
-// Facets: gamesPlayed (partidas juntos), winRate (%), avgCombinedDamage (daño promedio combinado)
-
 function synergy(a, b, gamesPlayed, winRate, avgCombinedDamage) {
   return [
     { uid: a, synergizes_with: { uid: b, 'synergizes_with|gamesPlayed': gamesPlayed, 'synergizes_with|winRate': winRate, 'synergizes_with|avgCombinedDamage': avgCombinedDamage } },
@@ -100,11 +81,6 @@ export const SYNERGY_EDGES = [
   ...synergy('_:sett',     '_:lillia',   1500, 55.0, 47200),
   ...synergy('_:kindred',  '_:morgana',  1200, 53.8, 44100),
 ];
-
-// ─── Aristas: Counters (COUNTERS) ────────────────────────────────────────────
-// Direccionales — A counters B significa A gana a B en duelo directo
-// Facets: matchups (veces enfrentados), winRateFavor (% win del que hace counter),
-//         avgKDADifference (diferencia de KDA), position (carril)
 
 function counter(a, b, matchups, winRateFavor, avgKDADifference, position) {
   return { uid: a, counters_edge: { uid: b, 'counters_edge|matchups': matchups, 'counters_edge|winRateFavor': winRateFavor, 'counters_edge|avgKDADifference': avgKDADifference, 'counters_edge|position': position } };

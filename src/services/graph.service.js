@@ -1,7 +1,5 @@
-import { query } from '../utils/dgraph.js';
-import ApiError  from '../utils/apiError.js';
-
-// ─── Helpers privados ─────────────────────────────────────────────────────────
+import { query, mutate } from '../utils/dgraph.js';
+import ApiError           from '../utils/apiError.js';
 
 function toArray(val) {
   if (!val) return [];
@@ -56,19 +54,7 @@ function buildGraphData(data) {
   return { nodes: [...nodesMap.values()], links };
 }
 
-function handle(fn) {
-  return async (req, res, next) => {
-    try { res.json({ data: await fn(req) }); }
-    catch (err) { next(err); }
-  };
-}
-
-// ─── Champion ─────────────────────────────────────────────────────────────────
-
-export const getChampionGraph = handle(async (req) => {
-  const { championId } = req.params;
-  if (!championId) throw new ApiError('championId is required', 400);
-
+export async function getChampionGraph(championId) {
   const dql = `
     query champion($id: string) {
       champion(func: eq(championId, $id)) {
@@ -103,14 +89,9 @@ export const getChampionGraph = handle(async (req) => {
       position:         c.position         ?? '',
     })),
   };
-});
+}
 
-// ─── Player ───────────────────────────────────────────────────────────────────
-
-export const getPlayerOverview = handle(async (req) => {
-  const { puuid } = req.params;
-  if (!puuid) throw new ApiError('puuid is required', 400);
-
+export async function getPlayerOverview(puuid) {
   const dql = `
     query player($id: string) {
       player(func: eq(puuid, $id)) {
@@ -149,11 +130,9 @@ export const getPlayerOverview = handle(async (req) => {
       lastPlayed:   p.lastPlayed  ?? '',
     })),
   };
-});
+}
 
-// ─── Pro ──────────────────────────────────────────────────────────────────────
-
-export const getActiveTeams = handle(async () => {
+export async function getActiveTeams() {
   const dql = `
     {
       teams(func: type(Team)) {
@@ -178,12 +157,9 @@ export const getActiveTeams = handle(async () => {
       isActive:    p.isActive ?? false,
     })),
   }));
-});
+}
 
-export const getProProfile = handle(async (req) => {
-  const { id: proPlayerId } = req.params;
-  if (!proPlayerId) throw new ApiError('proPlayerId is required', 400);
-
+export async function getProProfile(proPlayerId) {
   const dql = `
     query pro($id: string) {
       pro(func: eq(proPlayerId, $id)) {
@@ -223,9 +199,9 @@ export const getProProfile = handle(async (req) => {
       tournaments:   r.tournaments   ?? '',
     })),
   };
-});
+}
 
-export const getOrgGraph = handle(async () => {
+export async function getOrgGraph() {
   const dql = `
     {
       orgs(func: type(Organization)) {
@@ -259,11 +235,66 @@ export const getOrgGraph = handle(async () => {
       })),
     })),
   }));
-});
+}
+
+// ─── Mutations (llamadas por matchService al procesar partidas) ───────────────
+
+export async function addPlayedWith(puuidA, puuidB, { gamesShared, wins, losses, lastPlayed }) {
+  const dql = `
+    query {
+      a(func: eq(puuid, "${puuidA}")) { uid }
+      b(func: eq(puuid, "${puuidB}")) { uid }
+    }
+  `;
+  const data = await query(dql);
+  const uidA = data.a?.[0]?.uid;
+  const uidB = data.b?.[0]?.uid;
+  if (!uidA || !uidB) throw new ApiError('One or both players not found in Dgraph', 404);
+
+  await mutate([
+    { uid: uidA, played_with: { uid: uidB, 'played_with|gamesShared': gamesShared, 'played_with|wins': wins, 'played_with|losses': losses, 'played_with|lastPlayed': lastPlayed } },
+    { uid: uidB, played_with: { uid: uidA, 'played_with|gamesShared': gamesShared, 'played_with|wins': wins, 'played_with|losses': losses, 'played_with|lastPlayed': lastPlayed } },
+  ]);
+}
+
+export async function addMains(puuid, championId, { gamesPlayed, winRate, avgKDA, avgCSPerMin, lastPlayed, rank }) {
+  const dql = `
+    query {
+      player(func: eq(puuid, "${puuid}"))       { uid }
+      champ(func: eq(championId, "${championId}")) { uid }
+    }
+  `;
+  const data   = await query(dql);
+  const uidP   = data.player?.[0]?.uid;
+  const uidC   = data.champ?.[0]?.uid;
+  if (!uidP || !uidC) throw new ApiError('Player or champion not found in Dgraph', 404);
+
+  await mutate([
+    { uid: uidP, mains: { uid: uidC, 'mains|gamesPlayed': gamesPlayed, 'mains|winRate': winRate, 'mains|avgKDA': avgKDA, 'mains|avgCSPerMin': avgCSPerMin, 'mains|lastPlayed': lastPlayed, 'mains|rank': rank } },
+  ]);
+}
+
+export async function addSynergy(champIdA, champIdB, { gamesPlayed, winRate, avgCombinedDamage }) {
+  const dql = `
+    query {
+      a(func: eq(championId, "${champIdA}")) { uid }
+      b(func: eq(championId, "${champIdB}")) { uid }
+    }
+  `;
+  const data = await query(dql);
+  const uidA = data.a?.[0]?.uid;
+  const uidB = data.b?.[0]?.uid;
+  if (!uidA || !uidB) throw new ApiError('One or both champions not found in Dgraph', 404);
+
+  await mutate([
+    { uid: uidA, synergizes_with: { uid: uidB, 'synergizes_with|gamesPlayed': gamesPlayed, 'synergizes_with|winRate': winRate, 'synergizes_with|avgCombinedDamage': avgCombinedDamage } },
+    { uid: uidB, synergizes_with: { uid: uidA, 'synergizes_with|gamesPlayed': gamesPlayed, 'synergizes_with|winRate': winRate, 'synergizes_with|avgCombinedDamage': avgCombinedDamage } },
+  ]);
+}
 
 // ─── Full graph ───────────────────────────────────────────────────────────────
 
-export const getFullGraph = handle(async () => {
+export async function getFullGraph() {
   const dql = `
     {
       champions(func: type(Champion)) {
@@ -293,4 +324,4 @@ export const getFullGraph = handle(async () => {
   `;
   const data = await query(dql);
   return buildGraphData(data);
-});
+}

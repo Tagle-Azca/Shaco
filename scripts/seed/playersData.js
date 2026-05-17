@@ -1,6 +1,3 @@
-// ─── Nodos: Players (cuentas ranked) ─────────────────────────────────────────
-// puuid debe coincidir con el puuid en MongoDB (mongoData.js)
-
 export const PLAYER_NODES = [
   { uid: '_:p_faker',     'dgraph.type': 'Player', puuid: 'puuid-faker-001',     summonerName: 'Faker',     region: 'kr'   },
   { uid: '_:p_caps',      'dgraph.type': 'Player', puuid: 'puuid-caps-002',      summonerName: 'Caps',      region: 'euw1' },
@@ -13,10 +10,6 @@ export const PLAYER_NODES = [
   { uid: '_:p_theshy',    'dgraph.type': 'Player', puuid: 'puuid-theshy-009',    summonerName: 'TheShy',    region: 'kr'   },
   { uid: '_:p_rekkles',   'dgraph.type': 'Player', puuid: 'puuid-rekkles-010',   summonerName: 'Rekkles',   region: 'euw1' },
 ];
-
-// ─── Aristas: PLAYED_WITH ────────────────────────────────────────────────────
-// Bidireccionales — quiénes han jugado juntos en SoloQ
-// Facets: gamesShared, wins, losses, lastPlayed
 
 function playedWith(a, b, gamesShared, wins, losses, lastPlayed) {
   return [
@@ -34,11 +27,6 @@ export const PLAYED_WITH_EDGES = [
   ...playedWith('_:p_theshy',    '_:p_knight',    44, 27, 17, '2024-02-28'),
   ...playedWith('_:p_bjergsen',  '_:p_caps',      29, 15, 14, '2023-11-05'),
 ];
-
-// ─── Aristas: MAINS (Player → Champion) ──────────────────────────────────────
-// Los blank nodes de campeones (_:ahri, etc.) vienen definidos en championsData.js
-// pero al estar en la misma mutate() se pueden referenciar aquí sin problema
-// Facets: gamesPlayed, winRate (0-1), avgKDA, avgCSPerMin, lastPlayed, rank
 
 export const MAINS_EDGES = [
   { uid: '_:p_faker',     mains: { uid: '_:ahri',    'mains|gamesPlayed': 312, 'mains|winRate': 0.615, 'mains|avgKDA': '8.2/2.1/7.4', 'mains|avgCSPerMin': 9.8,  'mains|lastPlayed': '2024-03-20', 'mains|rank': 'S'  } },
