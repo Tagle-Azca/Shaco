@@ -1,7 +1,8 @@
 import ApiError from '../utils/apiError.js';
 import { getJson } from '../utils/http.js';
-import { findPlayerByPuuid, upsertPlayerProfile } from '../repositories/player.repository.js';
+import { findPlayerByPuuid, findPlayerByRiotId, upsertPlayerProfile } from '../repositories/player.repository.js';
 import { syncMatchesForPlayer } from './match.service.js';
+import { getPlayerStats } from '../repositories/match.repository.js';
 
 const ROUTING_BY_PLATFORM_REGION = {
     br1: 'americas',
@@ -107,3 +108,21 @@ export const getPlayerProfile = async (puuid) => {
 	return player;
 };
 
+export const getPlayerProfileByRiotId = async ({ gameName, tagLine }) => {
+	if (!gameName || !tagLine) {
+		throw new ApiError('gameName and tagLine are required', 400);
+	}
+
+	const player = await findPlayerByRiotId({ summonerName: gameName, tag: tagLine });
+
+	if (!player) {
+		throw new ApiError('Player not found', 404);
+	}
+
+	return player;
+};
+
+export const getPlayerStatsService = async (puuid) => {
+	if (!puuid) throw new ApiError('puuid is required', 400);
+	return getPlayerStats(puuid);
+};

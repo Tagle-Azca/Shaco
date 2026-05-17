@@ -59,35 +59,29 @@ export const syncMatchesForPlayer = async ({ puuid, routingRegion }) => {
         } else {
             const matchDetails = await getMatchDetails({ matchId, routingRegion });
 
-            const participant = matchDetails.info.participants.find(p => p.puuid === puuid);
-
             const matchData = {
-                matchId: matchDetails.metadata.matchId,
-                puuid: puuid,
-                champion: participant?.championName || '',
-                kills: participant?.kills || 0,
-                deaths: participant?.deaths || 0,
-                assists: participant?.assists || 0,
-                win: participant?.win || false,
-                cs: participant?.totalMinionsKilled + participant?.neutralMinionsKilled || 0,
-                damage: participant?.totalDamageDealtToChampions || 0,
+                matchId:  matchDetails.metadata.matchId,
                 duration: matchDetails.info.gameDuration,
                 gameMode: matchDetails.info.gameMode,
-                goldGraph: [],
+                participants: matchDetails.info.participants.map(p => ({
+                    puuid:    p.puuid,
+                    champion: p.championName       || '',
+                    kills:    p.kills              || 0,
+                    deaths:   p.deaths             || 0,
+                    assists:  p.assists            || 0,
+                    win:      p.win                || false,
+                    cs:       (p.totalMinionsKilled + p.neutralMinionsKilled) || 0,
+                    damage:   p.totalDamageDealtToChampions || 0,
+                })),
+                goldGraph:   [],
                 damageGraph: [],
                 objectiveSummary: {
-                    towers: {
-                    blueTeam: matchDetails.info.teams?.[0]?.objectives?.tower?.kills ?? 0,
-                    redTeam: matchDetails.info.teams?.[1]?.objectives?.tower?.kills ?? 0,
-                    },
-                    dragons: {
-                    blueTeam: matchDetails.info.teams?.[0]?.objectives?.dragon?.kills ?? 0,
-                    redTeam: matchDetails.info.teams?.[1]?.objectives?.dragon?.kills ?? 0,
-                    },
-                    barons: {
-                    blueTeam: matchDetails.info.teams?.[0]?.objectives?.baron?.kills ?? 0,
-                    redTeam: matchDetails.info.teams?.[1]?.objectives?.baron?.kills ?? 0,
-                    },
+                    towers:  { blueTeam: matchDetails.info.teams?.[0]?.objectives?.tower?.kills  ?? 0,
+                                redTeam:  matchDetails.info.teams?.[1]?.objectives?.tower?.kills  ?? 0 },
+                    dragons: { blueTeam: matchDetails.info.teams?.[0]?.objectives?.dragon?.kills ?? 0,
+                                redTeam:  matchDetails.info.teams?.[1]?.objectives?.dragon?.kills ?? 0 },
+                    barons:  { blueTeam: matchDetails.info.teams?.[0]?.objectives?.baron?.kills  ?? 0,
+                                redTeam:  matchDetails.info.teams?.[1]?.objectives?.baron?.kills  ?? 0 },
                 },
             };
             await upsertMatch(matchData);
