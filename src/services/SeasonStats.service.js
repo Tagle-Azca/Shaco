@@ -1,13 +1,31 @@
 const SeasonStatsRepository = require('../repositories/SeasonStats.repository');
+const axios = require('axios');
 
 class SeasonStatsService {
-    async addMatchToSeasonStats(playerIdInternal, seasonId, matchParticipantData, currentTier) {
+    async addMatchToSeasonStats(playerIdInternal, seasonId, matchId, puuid, summonerId) {
         try {
-            // 1. Intentar obtener estadísticas existentes de la temporada
+            const region = process.env.RIOT_REGION_AMERICAS || 'americas';
+            const platform = process.env.RIOT_PLATFORM || 'la1';
+            const apiKey = process.env.RIOT_API_KEY;
+
+            const matchUrl = `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
+            const matchResponse = await axios.get(matchUrl, { headers: { "X-Riot-Token": apiKey } });
+            const info = matchResponse.data.info;
+
+            const participantData = info.participants.find(p => p.puuid === puuid);
+            if (!participantData) {
+                throw new Error(`El jugador con PUUID ${puuid} no participó en la partida ${matchId}`);
+            }
+
+            const leagueUrl = `https://${platform}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`;
+            const leagueResponse = await axios.get(leagueUrl, { headers: { "X-Riot-Token": apiKey } });
+            
+            const soloQEntry = leagueResponse.data.find(entry => entry.queueType === 'RANKED_SOLO_5x5');
+            const currentTier = soloQEntry ? soloQEntry.tier : 'UNRANKED';
+
             let currentStats = await SeasonStatsRepository.getByPlayerAndSeason(playerIdInternal, seasonId);
 
             if (!currentStats) {
-                // Si no existe, inicializamos el objeto con valores en 0
                 currentStats = {
                     player_id: playerIdInternal,
                     season_id: seasonId,
@@ -16,34 +34,28 @@ class SeasonStatsService {
                     total_deaths: 0,
                     total_assists: 0,
                     highest_tier_achieved: currentTier,
-                    most_played_champion_id: matchParticipantData.championId,
+                    most_played_champion_id: participantData.championId,
                     average_kda: 0.0
                 };
             }
 
-            // 2. Acumular nuevas métricas de la partida
             currentStats.total_games_played += 1;
-            currentStats.total_kills += matchParticipantData.kills;
-            currentStats.total_deaths += matchParticipantData.deaths;
-            currentStats.total_assists += matchParticipantData.assists;
+            currentStats.total_kills += participantData.kills;
+            currentStats.total_deaths += participantData.deaths;
+            currentStats.total_assists += participantData.assists;
             
-            // Actualizar la liga más alta si aplica (Lógica simplificada)
-            if (currentTier) {
-                currentStats.highest_tier_achieved = currentTier;
-            }
+            currentStats.highest_tier_achieved = currentTier;
 
-            // 3. Recalcular el KDA Promedio (Evitando división por cero)
             const safeDeaths = currentStats.total_deaths === 0 ? 1 : currentStats.total_deaths;
             currentStats.average_kda = parseFloat(
                 ((currentStats.total_kills + currentStats.total_assists) / safeDeaths).toFixed(2)
             );
 
-            // 4. Persistir los datos consolidados en Cassandra
             await SeasonStatsRepository.createOrUpdate(currentStats);
             return currentStats;
 
         } catch (error) {
-            console.error("Error al actualizar estadísticas de temporada:", error);
+            console.error("Error al actualizar estadísticas de temporada mediante API:", error);
             throw error;
         }
     }

@@ -24,7 +24,7 @@ class MatchLogService {
             // 3. Mapear al modelo y guardar en el repositorio
             const matchData = {
                 player_id: playerIdInternal,
-                match_timestamp: info.gameStartTimestamp, // Riot da esto en milisegundos
+                match_timestamp: info.gameStartTimestamp, 
                 match_id: lastMatchId,
                 game_mode: info.gameMode,
                 champion_id: participant.championId,

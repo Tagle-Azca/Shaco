@@ -13,16 +13,13 @@ class EarlyGameService {
 
             const info = response.data.info;
             
-            // Riot divide los objetivos por equipo (100 = Azul, 200 = Rojo)
             const team100 = info.teams.find(t => t.teamId === 100);
             const team200 = info.teams.find(t => t.teamId === 200);
 
-            // Determinar quién hizo First Blood
             let fbTeam = 'NONE';
             if (team100.objectives.champion.first) fbTeam = '100';
             else if (team200.objectives.champion.first) fbTeam = '200';
 
-            // Determinar quién hizo el primer dragón
             let fdTeam = 'NONE';
             if (team100.objectives.dragon.first) fdTeam = '100';
             else if (team200.objectives.dragon.first) fdTeam = '200';
