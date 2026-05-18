@@ -1,6 +1,6 @@
 CREATE KEYSPACE IF NOT EXISTS shaco_analytics 
 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
-
+ 
 USE shaco_analytics;
 
 -- 1. Seguimiento Histórico del Ranking
