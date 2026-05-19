@@ -8,14 +8,15 @@ import Match       from '../src/models/Match.js';
 import PlayerStats from '../src/models/PlayerStats.js';
 import UserSettings from '../src/models/UserSettings.js';
 import TournamentResult from '../src/models/TournamentResult.js';
+import Tournament from '../src/models/Tournament.js';
 
-import { PLAYERS, TEAMS, PRO_PLAYERS, MATCHES, PLAYER_STATS, USER_SETTINGS, TOURNAMENT_RESULTS } from './seed/mongoData.js';
+import { PLAYERS, TEAMS, PRO_PLAYERS, MATCHES, PLAYER_STATS, USER_SETTINGS, TOURNAMENT_RESULTS, COMPETITIVE_PATCHES } from './seed/mongoData.js';
 
 async function seedMongo() {
   await Promise.all([
     Player.deleteMany(), Champion.deleteMany(), ProPlayer.deleteMany(),
     Team.deleteMany(), Match.deleteMany(), PlayerStats.deleteMany(), UserSettings.deleteMany(),
-    TournamentResult.deleteMany()
+    TournamentResult.deleteMany(), TournamentResult.deleteMany
   ]);
   await Player.insertMany(PLAYERS);
   await Team.insertMany(TEAMS);
@@ -24,6 +25,7 @@ async function seedMongo() {
   await PlayerStats.insertMany(PLAYER_STATS);
   await UserSettings.insertMany(USER_SETTINGS);
   await TournamentResult.insertMany(TOURNAMENT_RESULTS);
+  await Tournament.insertMany(COMPETITIVE_PATCHES);
   console.log('MongoDB seeded');
 }
 
@@ -75,7 +77,7 @@ async function seedChampionsMongo() {
 
     await Champion.insertMany(champions);
     console.log(`${champions.length} campeones insertados desde Data Dragon`);
-  }
+  };
 
 (async () => {
   await connectMongo();

@@ -9,7 +9,7 @@ export const getMatchesByPuuid = async (req, res, next) => {
         next(error);
     }
 };
-
+ 
 export const syncMatches = async (req, res, next) => {
     try {
         await syncMatchesForPlayer({ 

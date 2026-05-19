@@ -5,7 +5,7 @@ export const findMatchById = async (matchId) =>
 
 export const findMatchesByPuuid = async (puuid) =>
   Match.find({ 'participants.puuid': puuid }).lean();
-
+ 
 export const upsertMatch = async (matchData) =>
   Match.findOneAndUpdate(
     { matchId: matchData.matchId },

@@ -532,3 +532,57 @@ export const TOURNAMENT_RESULTS = [
     duration: 2384,
   },
 ]
+
+export const COMPETITIVE_PATCHES = [
+  {
+    patchId: '14.10',
+    tournament: 'LCK Spring 2024',
+    picks: [
+      // T1 vs Gen.G - Patch 14.10 (T1 wins)
+      { championId: 'Jayce', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Lee Sin', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Taliyah', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Jinx', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Leona', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Garen', teamId: 'GEN_KR', items: [], runes: [], win: false },
+      { championId: 'Nidalee', teamId: 'GEN_KR', items: [], runes: [], win: false },
+      { championId: 'Ahri', teamId: 'GEN_KR', items: [], runes: [], win: false },
+      { championId: 'Xayah', teamId: 'GEN_KR', items: [], runes: [], win: false },
+      { championId: 'Nautilus', teamId: 'GEN_KR', items: [], runes: [], win: false },
+    ]
+  },
+  {
+    patchId: '14.12',
+    tournament: 'LCK Spring 2024',
+    picks: [
+      // G2 vs DK - Patch 14.12 (DK wins)
+      { championId: 'Gragas', teamId: 'G2_EU', items: [], runes: [], win: false },
+      { championId: 'Elise', teamId: 'G2_EU', items: [], runes: [], win: false },
+      { championId: 'Orianna', teamId: 'G2_EU', items: [], runes: [], win: false },
+      { championId: 'Aphelios', teamId: 'G2_EU', items: [], runes: [], win: false },
+      { championId: 'Rakan', teamId: 'G2_EU', items: [], runes: [], win: false },
+      { championId: 'Darius', teamId: 'DK_KR', items: [], runes: [], win: true },
+      { championId: 'Lee Sin', teamId: 'DK_KR', items: [], runes: [], win: true },
+      { championId: 'Azir', teamId: 'DK_KR', items: [], runes: [], win: true },
+      { championId: 'Varus', teamId: 'DK_KR', items: [], runes: [], win: true },
+      { championId: 'Thresh', teamId: 'DK_KR', items: [], runes: [], win: true },
+    ]
+  },
+  {
+    patchId: '14.14',
+    tournament: 'LCK Spring 2024 Playoffs',
+    picks: [
+      // BLG vs T1 - Patch 14.14 (T1 wins)
+      { championId: 'Jax', teamId: 'BLG_CN', items: [], runes: [], win: false },
+      { championId: 'Rek\'Sai', teamId: 'BLG_CN', items: [], runes: [], win: false },
+      { championId: 'Syndra', teamId: 'BLG_CN', items: [], runes: [], win: false },
+      { championId: 'Ezreal', teamId: 'BLG_CN', items: [], runes: [], win: false },
+      { championId: 'Lux', teamId: 'BLG_CN', items: [], runes: [], win: false },
+      { championId: 'Fiora', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Nidalee', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Zoe', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Caitlyn', teamId: 'T1_KR', items: [], runes: [], win: true },
+      { championId: 'Braum', teamId: 'T1_KR', items: [], runes: [], win: true },
+    ]
+  },
+];
