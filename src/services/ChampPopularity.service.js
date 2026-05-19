@@ -12,7 +12,8 @@ class ChampPopularityService {
             console.log(`Iniciando consolidación de datos para la semana ${weekNumber}...`);
 
             for (const playerId of playerIdList) {
-                const matches = await matchLogRepository.getByPlayer(playerId);
+                const result = await matchLogRepository.getLatestByPlayer(playerId);
+                const matches = Array.isArray(result) ? result : (result?.rows || []);  
                 const rankingHistory = await playerRankingRepository.getHistoryByPlayer(playerId);
                 const latestRank = rankingHistory[0] ? rankingHistory[0].tier : 'GOLD';
 

@@ -3,58 +3,62 @@ import axios from 'axios';
 
 class EarlyGameService {
     async syncEarlyGameStats(matchId) {
-        const region = process.env.RIOT_REGION_AMERICAS || 'americas';
-        const url = `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
+        const token = process.env.RIOT_API_KEY;
+        const url = `https://americas.api.riotgames.com/lol/match/v5/matches/${matchId}`;
 
         try {
             const response = await axios.get(url, {
-                headers: { "X-Riot-Token": process.env.RIOT_API_KEY }
+                headers: { "X-Riot-Token": token }
             });
 
-            const info = response.data.info;
+            const matchData = response.data;
             
-            const team100 = info.teams.find(t => t.teamId === 100);
-            const team200 = info.teams.find(t => t.teamId === 200);
+            // 1. Validar que la data e "info" existan
+            if (!matchData || !matchData.info) {
+                throw new Error("No se pudo obtener la información detallada de la partida.");
+            }
 
-            let fbTeam = 'NONE';
-            if (team100.objectives.champion.first) fbTeam = '100';
-            else if (team200.objectives.champion.first) fbTeam = '200';
+            const info = matchData.info;
+            const teams = info.teams;
 
-            let fdTeam = 'NONE';
-            if (team100.objectives.dragon.first) fdTeam = '100';
-            else if (team200.objectives.dragon.first) fdTeam = '200';
+            if (!teams || teams.length < 2) {
+                throw new Error("La estructura de equipos de la partida está incompleta.");
+            }
 
-            // Determinar quién hizo el primer Heraldo (Nota: en parches recientes puede ser el Atormentador del Vacío)
-            let fhTeam = 'NONE';
-            if (team100.objectives.riftHerald && team100.objectives.riftHerald.first) fhTeam = '100';
-            else if (team200.objectives.riftHerald && team200.objectives.riftHerald.first) fhTeam = '200';
+            const blueTeam = teams.find(t => t.teamId === 100);
+            const redTeam = teams.find(t => t.teamId === 200);
 
-            // Quién ganó la partida
-            const winner = team100.win ? 'WIN_TEAM_100' : 'WIN_TEAM_200';
+            let firstBloodTeamId = "NONE";
+            if (blueTeam?.objectives?.champion?.first) firstBloodTeamId = "100";
+            else if (redTeam?.objectives?.champion?.first) firstBloodTeamId = "200";
 
-            const earlyStats = {
+            let firstDragonTeamId = "NONE";
+            if (blueTeam?.objectives?.dragon?.first) firstDragonTeamId = "100";
+            else if (redTeam?.objectives?.dragon?.first) firstDragonTeamId = "200";
+
+            let firstHordeOrHeraldTeamId = "NONE";
+            if (blueTeam?.objectives?.riftHerald?.first) firstHordeOrHeraldTeamId = "100";
+            else if (redTeam?.objectives?.riftHerald?.first) firstHordeOrHeraldTeamId = "200";
+
+            const earlyStatsEntry = {
                 game_mode: info.gameMode,
-                match_timestamp: info.gameStartTimestamp,
+                match_timestamp: new Date(info.gameStartTimestamp), // O info.gameCreation
                 match_id: matchId,
-                first_blood_team_id: fbTeam,
-                first_blood_time: 0, 
-                first_dragon_team_id: fdTeam,
-                first_dragon_type: 'UNKNOWN', 
-                first_herald_team_id: fhTeam,
-                win_loss_result: winner
+                first_blood_team_id: firstBloodTeamId,
+                first_blood_time: 0, // Nota: El tiempo exacto requiere procesar la Timeline de la partida, puedes dejarlo en 0 por ahora
+                first_dragon_team_id: firstDragonTeamId,
+                first_dragon_type: firstDragonTeamId !== "NONE" ? "UNKNOWN" : "NONE", // Mismo caso, requiere timeline para saber el elemento exacto
+                first_herald_team_id: firstHordeOrHeraldTeamId,
+                win_loss_result: info.teams[0].win ? "BLUE_WIN" : "RED_WIN"
             };
-
-            await EarlyGameRepository.create(earlyStats);
-            return earlyStats;
+            
+            console.log(`[EarlyGameService] Estadísticas tempranas procesadas para la partida ${matchId}`);
+            return earlyStatsEntry;
 
         } catch (error) {
-            console.error(`Error procesando early game para la partida ${matchId}:`, error);
+            console.error(`Error procesando early game para la partida ${matchId}:`, error.message);
             throw error;
         }
-    }
-
-    async getStatsByMode(gameMode) {
-        return await EarlyGameRepository.getByGameMode(gameMode);
     }
 }
 

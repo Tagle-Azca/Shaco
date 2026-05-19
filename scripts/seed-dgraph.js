@@ -211,5 +211,6 @@ function buildMatchEdges(matches) {
   await mutate(mutations);
 
   console.log(`Dgraph seeded — ${players.length} players, ${teams.length} teams, ${proPlayers.length} pros, ${champions.length} champions, ${matches.length} matches procesados`);
+  console.log('Seed completo — corre "npm run seed:cassandra" para poblar Cassandra');
   process.exit(0);
 })().catch((err) => { console.error(err); process.exit(1); });
