@@ -1,6 +1,5 @@
-const MatchLogRepository = require('../repositories/matchLog.repository');
-const axios = require('axios');
-
+import MatchLogRepository from '../repositories/matchLog.repository.js';
+import axios from 'axios';
 class MatchLogService {
     async syncLatestMatch(puuid, playerIdInternal) {
         const region = process.env.RIOT_REGION_AMERICAS || 'americas';
@@ -47,4 +46,4 @@ class MatchLogService {
     }
 }
 
-module.exports = new MatchLogService();
+export default new MatchLogService();

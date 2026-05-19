@@ -60,4 +60,4 @@ export async function shutdown() {
   await client.shutdown();
 }
 
-export { client };
+export default client;

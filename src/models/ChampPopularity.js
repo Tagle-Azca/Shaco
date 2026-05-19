@@ -6,4 +6,4 @@ const ChampPopularity = {
     win_rate_in_week: 0.0
 };
 
-module.exports = ChampPopularity;
+export default ChampPopularity;

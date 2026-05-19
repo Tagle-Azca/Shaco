@@ -1,5 +1,5 @@
-const PlayerRankingRepository = require('../repositories/playerRanking.repository');
-const axios = require('axios');
+import PlayerRankingRepository from '../repositories/playerRanking.repository.js';
+import axios from 'axios';
 
 class PlayerRankingService {
     async syncPlayerRanking(summonerId, playerIdInternal) {
@@ -41,4 +41,4 @@ class PlayerRankingService {
     }
 }
 
-module.exports = new PlayerRankingService();
+export default new PlayerRankingService();

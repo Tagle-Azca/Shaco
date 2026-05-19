@@ -1,6 +1,5 @@
-const TournamentRepository = require('../repositories/Tournament_cassandra.repository');
-const axios = require('axios');
-
+import TournamentRepository from '../repositories/Tournament_cassandra.repository.js';
+import axios from 'axios';
 class TournamentService {
     /**
      * Consume la API de LoL Esports de Riot para obtener la agenda/resultados
@@ -74,4 +73,4 @@ class TournamentService {
     }
 }
 
-module.exports = new TournamentService();
+export default new TournamentService();

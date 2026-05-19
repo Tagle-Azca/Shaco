@@ -1,6 +1,5 @@
-const SeasonStatsRepository = require('../repositories/SeasonStats.repository');
-const axios = require('axios');
-
+import SeasonStatsRepository from '../repositories/SeasonStats.repository.js';
+import axios from 'axios';
 class SeasonStatsService {
     async addMatchToSeasonStats(playerIdInternal, seasonId, matchId, puuid, summonerId) {
         try {
@@ -65,4 +64,4 @@ class SeasonStatsService {
     }
 }
 
-module.exports = new SeasonStatsService();
+export default new SeasonStatsService();

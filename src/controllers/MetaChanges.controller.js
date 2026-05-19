@@ -1,5 +1,4 @@
-const MetaChangesService = require('../services/MetaChanges.service');
-
+import MetaChangesService from "../services/MetaChanges.service.js";
 class MetaChangesController {
     async getMeta(req, res) {
         try {
@@ -22,4 +21,4 @@ class MetaChangesController {
     }
 }
 
-module.exports = new MetaChangesController();
+export default new MetaChangesController();

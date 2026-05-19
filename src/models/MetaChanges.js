@@ -6,5 +6,4 @@ const MetaChanges = {
     global_ban_rate: 0.0,
     total_games_analyzed: 0 
 };
-
-module.exports = MetaChanges;
+export default MetaChanges;

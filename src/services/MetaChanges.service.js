@@ -1,6 +1,5 @@
-const MetaChangesRepository = require('../repositories/MetaChanges.repository');
-const axios = require('axios');
-
+import MetaChangesRepository from '../repositories/MetaChanges.repository.js';
+import axios from 'axios';
 class MetaChangesService {
     async syncMetaForPatch(patchVersion) {
         try {
@@ -44,4 +43,4 @@ class MetaChangesService {
     }
 }
 
-module.exports = new MetaChangesService();
+export default new MetaChangesService();

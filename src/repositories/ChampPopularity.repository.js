@@ -1,4 +1,4 @@
-const client = require('../utils/cassandra');
+import client from "../utils/cassandra.js";
 
 class ChampPopularityRepository {
     async createOrUpdate(data) {
@@ -28,4 +28,4 @@ class ChampPopularityRepository {
     }
 }
 
-module.exports = new ChampPopularityRepository();
+export default new ChampPopularityRepository();

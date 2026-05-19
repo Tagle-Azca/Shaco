@@ -1,4 +1,4 @@
-const client = require('../utils/cassandra');
+import client from "../utils/cassandra.js";
 
 class MetaChangesRepository {
     async updateOrInsert(data) {
@@ -26,4 +26,4 @@ class MetaChangesRepository {
     }
 }
 
-module.exports = new MetaChangesRepository();
+export default new MetaChangesRepository();

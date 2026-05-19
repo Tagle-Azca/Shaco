@@ -10,4 +10,4 @@ const SeasonStats = {
     average_kda: 0.0
 };
 
-module.exports = SeasonStats;
+export default SeasonStats;

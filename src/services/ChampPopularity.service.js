@@ -1,7 +1,6 @@
-const ChampPopularityRepository = require('../repositories/ChampPopularity.repository');
-const MatchLogRepository = require('../repositories/MatchLog.repository'); 
-const PlayerRankingRepository = require('../repositories/PlayerRanking.repository');
-
+import ChampPopularityRepository from '../repositories/ChampPopularity.repository.js';
+import matchLogRepository from '../repositories/matchLog.repository.js';
+import playerRankingRepository from '../repositories/playerRanking.repository.js';
 class ChampPopularityService {
     /**
      * Consolida de forma autónoma las estadísticas de la semana leyendo las partidas 
@@ -13,8 +12,8 @@ class ChampPopularityService {
             console.log(`Iniciando consolidación de datos para la semana ${weekNumber}...`);
 
             for (const playerId of playerIdList) {
-                const matches = await MatchLogRepository.getByPlayer(playerId);
-                const rankingHistory = await PlayerRankingRepository.getHistoryByPlayer(playerId);
+                const matches = await matchLogRepository.getByPlayer(playerId);
+                const rankingHistory = await playerRankingRepository.getHistoryByPlayer(playerId);
                 const latestRank = rankingHistory[0] ? rankingHistory[0].tier : 'GOLD';
 
                 for (const match of matches) {
@@ -73,4 +72,4 @@ class ChampPopularityService {
     }
 }
 
-module.exports = new ChampPopularityService();
+export default new ChampPopularityService();

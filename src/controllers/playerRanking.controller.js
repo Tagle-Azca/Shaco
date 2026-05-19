@@ -1,5 +1,4 @@
-const PlayerRankingService = require('../services/playerRanking.service');
-
+import PlayerRankingService from "../services/PlayerRanking.service.js";
 class PlayerRankingController {
     async getHistory(req, res) {
         try {
@@ -22,4 +21,4 @@ class PlayerRankingController {
     }
 }
 
-module.exports = new PlayerRankingController();
+export default new PlayerRankingController();

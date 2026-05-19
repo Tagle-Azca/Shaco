@@ -9,4 +9,4 @@ const PlayerRanking = {
     series_progress: null   
 };
 
-module.exports = PlayerRanking;
+export default PlayerRanking;

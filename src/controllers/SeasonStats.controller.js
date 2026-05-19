@@ -1,5 +1,4 @@
-const SeasonStatsService = require('../services/SeasonStats.service');
-
+import SeasonStatsService from "../services/SeasonStats.service.js";
 class SeasonStatsController {
     async getHistory(req, res) {
         try {
@@ -27,4 +26,4 @@ class SeasonStatsController {
     }
 }
 
-module.exports = new SeasonStatsController();
+export default new SeasonStatsController();

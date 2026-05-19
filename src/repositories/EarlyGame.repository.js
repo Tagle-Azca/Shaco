@@ -1,5 +1,4 @@
-const client = require('../utils/cassandra');
-
+import client from "../utils/cassandra.js";
 class EarlyGameRepository {
     async create(data) {
         const query = `
@@ -34,4 +33,4 @@ class EarlyGameRepository {
     }
 }
 
-module.exports = new EarlyGameRepository();
+export default new EarlyGameRepository();

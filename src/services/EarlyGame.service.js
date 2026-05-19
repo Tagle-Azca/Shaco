@@ -1,5 +1,5 @@
-const EarlyGameRepository = require('../repositories/EarlyGame.repository');
-const axios = require('axios');
+import EarlyGameRepository from '../repositories/EarlyGame.repository.js';
+import axios from 'axios';
 
 class EarlyGameService {
     async syncEarlyGameStats(matchId) {
@@ -58,4 +58,4 @@ class EarlyGameService {
     }
 }
 
-module.exports = new EarlyGameService();
+export default new EarlyGameService();

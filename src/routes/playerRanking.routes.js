@@ -1,11 +1,10 @@
-const express = require('express');
+import express from 'express';
+import PlayerRankingController from '../controllers/playerRanking.controller.js';
 const router = express.Router();
-const PlayerRankingController = require('../controllers/playerRanking.controller');
-
 // Obtener el historial guardado
 router.get('/:playerId/history', PlayerRankingController.getHistory);
 
 // Disparar una sincronización (poblamiento)
 router.post('/sync', PlayerRankingController.sync);
 
-module.exports = router;
+export default router;

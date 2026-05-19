@@ -1,5 +1,4 @@
-const TournamentService = require('../services/Tournament_cassandra.service');
-
+import TournamentService from "../services/tournament.service.js";
 class TournamentController {
     async getMatches(req, res) {
         try {
@@ -21,4 +20,4 @@ class TournamentController {
     }
 }
 
-module.exports = new TournamentController();
+export default new TournamentController();

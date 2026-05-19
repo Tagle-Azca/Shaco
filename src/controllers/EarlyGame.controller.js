@@ -1,5 +1,4 @@
-const EarlyGameService = require('../services/EarlyGame.service');
-
+import EarlyGameService from '../services/EarlyGame.service.js';
 class EarlyGameController {
     async getStats(req, res) {
         try {
@@ -22,4 +21,4 @@ class EarlyGameController {
     }
 }
 
-module.exports = new EarlyGameController();
+export default new EarlyGameController();

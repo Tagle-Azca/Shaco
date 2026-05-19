@@ -1,5 +1,4 @@
-const client = require('../utils/cassandra');
-
+import client from "../utils/cassandra.js";
 class SeasonStatsRepository {
     async createOrUpdate(data) {
         const query = `
@@ -39,4 +38,4 @@ class SeasonStatsRepository {
     }
 }
 
-module.exports = new SeasonStatsRepository();
+export default new SeasonStatsRepository();

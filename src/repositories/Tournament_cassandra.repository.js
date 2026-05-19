@@ -1,5 +1,4 @@
-const client = require('../utils/cassandra');
-
+import client from "../utils/cassandra.js";
 class TournamentRepository {
     async create(data) {
         const query = `
@@ -29,4 +28,4 @@ class TournamentRepository {
     }
 }
 
-module.exports = new TournamentRepository();
+export default new TournamentRepository();

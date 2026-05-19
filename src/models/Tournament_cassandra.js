@@ -10,4 +10,4 @@ const Tournament = {
     stage: ''                
 };
 
-module.exports = Tournament;
+export default Tournament;

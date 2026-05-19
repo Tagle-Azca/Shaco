@@ -1,4 +1,4 @@
-const client = require('../utils/cassandra');
+import client from "../utils/cassandra.js";
 
 class MatchLogRepository {
     async create(data) {
@@ -33,4 +33,4 @@ class MatchLogRepository {
     }
 }
 
-module.exports = new MatchLogRepository();
+export default new MatchLogRepository();

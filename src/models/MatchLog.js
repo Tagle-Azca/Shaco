@@ -9,4 +9,4 @@ const MatchLog = {
     duration: 0             // Segundos
 };
 
-module.exports = MatchLog;
+export default MatchLog;

@@ -10,4 +10,4 @@ const EarlyGame = {
     win_loss_result: ''          
 };
 
-module.exports = EarlyGame;
+export default EarlyGame;

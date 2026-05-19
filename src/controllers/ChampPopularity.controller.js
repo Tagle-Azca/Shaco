@@ -1,5 +1,4 @@
-const ChampPopularityService = require('../services/ChampPopularity.service');
-
+import ChampPopularityService from '../services/ChampPopularity.service.js';
 class ChampPopularityController {
     async getMetaRanking(req, res) {
         try {
@@ -24,4 +23,4 @@ class ChampPopularityController {
     }
 }
 
-module.exports = new ChampPopularityController();
+export default new ChampPopularityController();

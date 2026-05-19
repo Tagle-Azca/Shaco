@@ -1,5 +1,4 @@
-const client = require('../utils/cassandra');
-
+import client from "../utils/cassandra.js";
 class PlayerRankingRepository {
     async create(data) {
         const query = `
@@ -27,4 +26,4 @@ class PlayerRankingRepository {
     }
 }
 
-module.exports = new PlayerRankingRepository();
+export default new PlayerRankingRepository();
